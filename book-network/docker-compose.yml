@@ -1,0 +1,40 @@
+services:
+  postgres:
+    container_name: postgres_jwt
+    image: postgres:16
+    environment:
+      POSTGRES_USER: juan
+      POSTGRES_PASSWORD: admin123
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: book_social_network
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+    networks:
+      - spring-demo
+    restart: unless-stopped
+  mail-dev:
+    container_name: mail-dev-bsn
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=juan@mail.com # mail, no gmail
+      - PGADMIN_DEFAULT_PASSWORD=admin123
+    ports:
+      - 5050:80
+    depends_on:
+      - postgres
+    networks:
+      - spring-demo   # 🔹 muy importante
+networks:
+  spring-demo:
+      driver: bridge
+
+volumes:
+  postgres:
+    driver: local
